@@ -17,6 +17,10 @@
 
 #include "data.h"
 
+#ifdef GEKKO
+#define DATADIR "data"
+#endif
+
 /**
  * Return the full file name of the data file named `name`, found in
  * the data directory named `dir`.

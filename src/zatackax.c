@@ -2066,7 +2066,11 @@ void exitGame(int status)
     exit(status);
 }
 
+#ifdef GEKKO
+int main(int argc, char *argv[])
+#else
 int main(void)
+#endif
 {
     static Uint32 prevtime = 0;
 

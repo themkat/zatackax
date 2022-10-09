@@ -3,6 +3,7 @@
 .dirstamp
 .zatackax
 Makefile
+!/gcn_build/Makefile
 aclocal.m4
 autom4te.cache
 config.log
@@ -10,3 +11,6 @@ config.status
 gmon.out
 src/*.o
 zatackax
+build
+zatackax.dol
+zatackax.elf
