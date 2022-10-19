@@ -1,0 +1,16 @@
+name: Build project
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkitppc
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build GameCube dol
+        run: |
+          make -f gcn_build/Makefile
