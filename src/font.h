@@ -24,7 +24,12 @@ typedef enum font_size {
 
 extern TTF_Font *fonts[N_FONTS];
 
+#ifdef GEKKO
+bool loadFont(Font f, const uint8_t* fontData, size_t fontDataSize, FontSize size);
+#else
 bool loadFont(Font f, const char *filename, FontSize size);
+#endif
+
 bool loadFonts(void);
 
 #endif

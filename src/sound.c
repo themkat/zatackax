@@ -15,6 +15,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef GEKKO
+// sound resources packed into binary data
+#include "sound_theme1_ogg.h"
+#include "sound_bep_ogg.h"
+#include "sound_beep_ogg.h"
+#include "sound_beeep_ogg.h"
+#include "sound_beeeep_ogg.h"
+#include "sound_beeeeep_ogg.h"
+#include "sound_beeeeeep_ogg.h"
+#include "sound_beeeeeeep_ogg.h"
+#include "sound_beeeeeeeep_ogg.h"
+#include "sound_round_begin_ogg.h"
+#include "sound_crash_ogg.h"
+#include "sound_explosion_ogg.h"
+#include "sound_speed_ogg.h"
+#include "sound_freeze_ogg.h"
+#include "sound_confusion_ogg.h"
+#include "sound_sharpturn_ogg.h"
+#include "sound_timestep_ogg.h"
+#include "sound_mole_ogg.h"
+#include "sound_warp_ogg.h"
+#include "sound_ghost_ogg.h"
+#include "sound_tronmode_ogg.h"
+#include "sound_chilirun_ogg.h"
+#include "sound_rocketlauncher_ogg.h"
+#endif
+
 #include "sound.h"
 
 Mix_Music *bgm = NULL;
@@ -33,19 +60,31 @@ int initSound(void)
  * Load a sound file `filename` and identify it as `s`. Return true on
  * success, otherwise false.
  */
+#ifdef GEKKO
+bool loadSound(Sound s, const uint8_t* soundData, size_t soundSize)
+#else
 bool loadSound(Sound s, const char *filename)
+#endif
 {
+    #ifdef GEKKO
+    Mix_Chunk *sound = Mix_LoadWAV_RW(SDL_RWFromMem(soundData, soundSize), 0);
+    #else
     char *file = dataFile("sound", filename);
     Mix_Chunk *sound = Mix_LoadWAV(file);
-
+    #endif
+    
     if (sound == NULL) {
+        #ifndef GEKKO
         fileNotFound(file);
         free(file);
+        #endif
         return false;
     }
 
     sounds[s] = sound;
+    #ifndef GEKKO
     free(file);
+    #endif
     return true;
 }
 
@@ -53,18 +92,30 @@ bool loadSound(Sound s, const char *filename)
  * Load the background music from `filename`. Return true on success,
  * otherwise false.
  */
+#ifdef GEKKO
+bool loadBGM(const uint8_t* soundData, size_t soundSize)
+#else
 bool loadBGM(const char *filename)
+#endif
 {
+    #ifdef GEKKO
+    bgm = Mix_LoadMUS_RW(SDL_RWFromMem(soundData, soundSize));
+    #else
     char *file = dataFile("sound", filename);
     bgm = Mix_LoadMUS(file);
-
+    #endif
+    
     if (bgm == NULL) {
+        #ifndef GEKKO
         fileNotFound(file);
         free(file);
+        #endif
         return false;
     }
 
+    #ifndef GEKKO
     free(file);
+    #endif
     return true;
 }
 
@@ -74,6 +125,31 @@ bool loadBGM(const char *filename)
  */
 bool loadSounds(void)
 {
+    #ifdef GEKKO
+    return loadBGM(theme1_ogg, theme1_ogg_size)
+        && loadSound(SOUND_BEP, bep_ogg, bep_ogg_size)
+        && loadSound(SOUND_BEEP, beep_ogg, beep_ogg_size)
+        && loadSound(SOUND_BEEEP, beeep_ogg, beeep_ogg_size)
+        && loadSound(SOUND_BEEEEP, beeeep_ogg, beeeep_ogg_size)
+        && loadSound(SOUND_BEEEEEP, beeeeep_ogg, beeeeep_ogg_size)
+        && loadSound(SOUND_BEEEEEEP, beeeeeep_ogg, beeeeeep_ogg_size)
+        && loadSound(SOUND_BEEEEEEEP, beeeeeeep_ogg, beeeeeeep_ogg_size)
+        && loadSound(SOUND_BEEEEEEEEP, beeeeeeeep_ogg, beeeeeeeep_ogg_size)
+        && loadSound(SOUND_ROUND_BEGIN, round_begin_ogg, round_begin_ogg_size)
+        && loadSound(SOUND_CRASH, crash_ogg, crash_ogg_size)
+        && loadSound(SOUND_EXPLOSION, explosion_ogg, explosion_ogg_size)
+        && loadSound(SOUND_SPEED, speed_ogg, speed_ogg_size)
+        && loadSound(SOUND_FREEZE, freeze_ogg, freeze_ogg_size)
+        && loadSound(SOUND_CONFUSION, confusion_ogg, confusion_ogg_size)
+        && loadSound(SOUND_SHARPTURN, sharpturn_ogg, sharpturn_ogg_size)
+        && loadSound(SOUND_TIMESTEP, timestep_ogg, timestep_ogg_size)
+        && loadSound(SOUND_MOLE, mole_ogg, mole_ogg_size)
+        && loadSound(SOUND_WARP, warp_ogg, warp_ogg_size)
+        && loadSound(SOUND_GHOST, ghost_ogg, ghost_ogg_size)
+        && loadSound(SOUND_TRON, tronmode_ogg, tronmode_ogg_size)
+        && loadSound(SOUND_CHILIRUN, chilirun_ogg, chilirun_ogg_size)
+        && loadSound(SOUND_ROCKETLAUNCHER, rocketlauncher_ogg, rocketlauncher_ogg_size);
+    #else
     return loadBGM("theme1.ogg")
         && loadSound(SOUND_BEP, "bep.ogg")
         && loadSound(SOUND_BEEP, "beep.ogg")
@@ -97,6 +173,7 @@ bool loadSounds(void)
         && loadSound(SOUND_TRON, "tronmode.ogg")
         && loadSound(SOUND_CHILIRUN, "chilirun.ogg")
         && loadSound(SOUND_ROCKETLAUNCHER, "rocketlauncher.ogg");
+    #endif
 }
 
 /**

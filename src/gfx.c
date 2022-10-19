@@ -15,6 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef GEKKO
+// Images / Graphics resources
+#include "gfx_arrowsheet_png.h"
+#include "gfx_ball_png.h"
+#include "gfx_logo_png.h"
+#include "gfx_wis_chilirun_png.h"
+#include "gfx_wis_confusion_png.h"
+#include "gfx_wis_frostwave_png.h"
+#include "gfx_wis_ghost_png.h"
+#include "gfx_wis_mole_png.h"
+#include "gfx_wis_rocketlauncher_png.h"
+#include "gfx_wis_sharpturn_png.h"
+#include "gfx_wis_lightningspeed_png.h"
+#include "gfx_wis_timestep_png.h"
+#include "gfx_wis_tron_png.h"
+#include "gfx_wis_warp_png.h"
+#include "gfx_wi_bg_png.h"
+#include "gfx_wi_chilirun_png.h"
+#include "gfx_wi_confusion_png.h"
+#include "gfx_wi_frostwave_png.h"
+#include "gfx_wi_ghost_png.h"
+#include "gfx_wi_mole_png.h"
+#include "gfx_wi_rocketlauncher_png.h"
+#include "gfx_wi_sharpturn_png.h"
+#include "gfx_wi_lightningspeed_png.h"
+#include "gfx_wi_timestep_png.h"
+#include "gfx_wi_tron_png.h"
+#include "gfx_wi_warp_png.h"
+#endif
+
 #include "gfx.h"
 
 SDL_Color colors[N_COLORS];
@@ -32,12 +62,14 @@ int clearSurface(SDL_Surface *s)
     return SDL_FillRect(s, &s->clip_rect, color);
 }
 
+#ifndef GEKKO
 /**
  * Load an icon file named `filename`. Return the loaded image, or
  * NULL if it wasn't loaded.
  */
 SDL_Surface *loadIcon(const char *filename)
 {
+  // TODO: should probably use SDL_Creatergbsurfacefrom here as well? So we don't have to load a file system
     char *file = dataFile("gfx", filename);
     SDL_Surface *icon = SDL_LoadBMP(file);
 
@@ -48,30 +80,45 @@ SDL_Surface *loadIcon(const char *filename)
     free(file);
     return icon;
 }
+#endif
 
 /**
  * Load an image file named `filename` and identify it as `i`. Return
  * true on success, otherwise false.
  */
+#ifdef GEKKO
+bool loadImage(Image i, const uint8_t* imageData, size_t imageSize)
+#else
 bool loadImage(Image i, const char *filename)
+#endif
 {
+    #ifdef GEKKO
+    SDL_Surface *loadedImage = IMG_Load_RW(SDL_RWFromMem(imageData, imageSize), 0);
+    #else
     char *file = dataFile("gfx", filename);
     SDL_Surface *loadedImage = IMG_Load(file);
+    #endif
 
     if (loadedImage == NULL) {
+        #ifndef GEKKO
         fileNotFound(file);
         free(file);
+        #endif
         return false;
     }
 
     images[i] = SDL_DisplayFormatAlpha(loadedImage);
+    #ifndef GEKKO
     if (olvl >= O_DEBUG) {
         printf("Loaded: %s\t(w:%d h:%d bpp:%d)\n", filename, images[i]->w,
                images[i]->h, images[i]->format->BitsPerPixel);
     }
+    #endif
     SDL_FreeSurface(loadedImage);
 
+    #ifndef GEKKO
     free(file);
+    #endif
     return true;
 }
 
@@ -81,6 +128,34 @@ bool loadImage(Image i, const char *filename)
  */
 bool loadImages(void)
 {
+    #ifdef GEKKO
+    return loadImage(IMG_ARROWS, arrowsheet_png, arrowsheet_png_size)
+        && loadImage(IMG_BALL, ball_png, ball_png_size)
+        && loadImage(IMG_LOGO, logo_png, logo_png_size)
+        && loadImage(IMG_WIS_CHILIRUN, wis_chilirun_png, wis_chilirun_png_size)
+        && loadImage(IMG_WIS_CONFUSION, wis_confusion_png, wis_confusion_png_size)
+        && loadImage(IMG_WIS_FROST, wis_frostwave_png, wis_frostwave_png_size)
+        && loadImage(IMG_WIS_GHOST, wis_ghost_png, wis_ghost_png_size)
+        && loadImage(IMG_WIS_MOLE, wis_mole_png, wis_mole_png_size)
+        && loadImage(IMG_WIS_ROCKETLAUNCHER, wis_rocketlauncher_png, wis_rocketlauncher_png_size)
+        && loadImage(IMG_WIS_SHARPTURN, wis_sharpturn_png, wis_sharpturn_png_size)
+        && loadImage(IMG_WIS_SPEED, wis_lightningspeed_png, wis_lightningspeed_png_size)
+        && loadImage(IMG_WIS_TIMESTEP, wis_timestep_png, wis_timestep_png_size)
+        && loadImage(IMG_WIS_TRON, wis_tron_png, wis_tron_png_size)
+        && loadImage(IMG_WIS_WARP, wis_warp_png, wis_warp_png_size)
+        && loadImage(IMG_WI_BG, wi_bg_png, wi_bg_png_size)
+        && loadImage(IMG_WI_CHILIRUN, wi_chilirun_png, wi_chilirun_png_size)
+        && loadImage(IMG_WI_CONFUSION, wi_confusion_png, wi_confusion_png_size)
+        && loadImage(IMG_WI_FROST, wi_frostwave_png, wi_frostwave_png_size)
+        && loadImage(IMG_WI_GHOST, wi_ghost_png, wi_ghost_png_size)
+        && loadImage(IMG_WI_MOLE, wi_mole_png, wi_mole_png_size)
+        && loadImage(IMG_WI_ROCKETLAUNCHER, wi_rocketlauncher_png, wi_rocketlauncher_png_size)
+        && loadImage(IMG_WI_SHARPTURN, wi_sharpturn_png, wi_sharpturn_png_size)
+        && loadImage(IMG_WI_SPEED, wi_lightningspeed_png, wi_lightningspeed_png_size)
+        && loadImage(IMG_WI_TIMESTEP, wi_timestep_png, wi_timestep_png_size)
+        && loadImage(IMG_WI_TRON, wi_tron_png, wi_tron_png_size)
+        && loadImage(IMG_WI_WARP, wi_warp_png, wi_warp_png_size);
+    #else
     return loadImage(IMG_ARROWS, "arrowsheet.png")
         && loadImage(IMG_BALL, "ball.png")
         && loadImage(IMG_LOGO, "logo.png")
@@ -107,6 +182,7 @@ bool loadImages(void)
         && loadImage(IMG_WI_TIMESTEP, "wi_timestep.png")
         && loadImage(IMG_WI_TRON, "wi_tron.png")
         && loadImage(IMG_WI_WARP, "wi_warp.png");
+    #endif
 }
 
 /**

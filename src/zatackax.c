@@ -1972,10 +1972,13 @@ int init(void)
     srand(SDL_GetTicks());
 
     SDL_ShowCursor(SDL_DISABLE);
+    #ifndef GEKKO
+    // doesn't really make sense out of a window context
     SDL_WM_SetCaption("Zatacka X", "Zatacka X");
     SDL_Surface *icon = loadIcon("icon.bmp");
     SDL_WM_SetIcon(icon, NULL);
     SDL_FreeSurface(icon);
+    #endif
 
     return 1;
 }

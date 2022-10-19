@@ -46,8 +46,18 @@ typedef enum image {
 extern SDL_Surface *images[N_IMAGES];
 
 int clearSurface(SDL_Surface *s);
+
+#ifndef GEKKO
+// icons only makes sense in windowing systems
 SDL_Surface *loadIcon(const char *filename);
+#endif
+
+#ifdef GEKKO
+bool loadImage(Image i, const uint8_t* imageData, size_t imageSize);
+#else
 bool loadImage(Image i, const char *filename);
+#endif
+
 bool loadImages(void);
 void initColors(void);
 

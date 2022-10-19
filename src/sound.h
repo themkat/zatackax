@@ -37,7 +37,13 @@ typedef enum sound {
 extern Mix_Music *bgm;
 
 int initSound(void);
+
+#ifdef GEKKO
+bool loadSound(Sound s, const uint8_t* soundData, size_t soundSize);
+#else
 bool loadSound(Sound s, const char *filename);
+#endif
+
 bool loadSounds(void);
 void playSound(unsigned int sound, int play);
 void playBGM(void);

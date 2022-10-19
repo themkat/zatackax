@@ -17,9 +17,7 @@
 
 #include "data.h"
 
-#ifdef GEKKO
-#define DATADIR "data"
-#endif
+#ifndef GEKKO
 
 /**
  * Return the full file name of the data file named `name`, found in
@@ -32,3 +30,4 @@ char *dataFile(const char *dir, const char *name)
     snprintf(file, strlen + 1, "%s/%s/%s", DATADIR, dir, name);
     return file;
 }
+#endif
