@@ -1,4 +1,3 @@
-# TODO: instead of making the entire project gc specific, maybe instead have a saperate folder like the switch guy did. Then we can ignore the files we do not want
 #---------------------------------------------------------------------------------
 # Clear the implicit built in rules
 #---------------------------------------------------------------------------------
@@ -35,7 +34,7 @@ LDFLAGS		= -g $(MACHDEP) -Wl,-Map,$(notdir $@).map
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
 # TODO: maybe look into pkgconfig instead? might work
-LIBS	:= -lSDL_image -lSDL_ttf -lSDL_mixer `$(DEVKITPRO)/portlibs/gamecube/bin/sdl-config --libs` -lvorbisfile -lvorbis -logg -lmad -lm `$(DEVKITPRO)/portlibs/ppc/bin/freetype-config --libs`
+LIBS	:= -lSDL_image -lSDL_ttf -lSDL_mixer `$(DEVKITPRO)/portlibs/gamecube/bin/sdl-config --libs` -ljpeg -lvorbisfile -lvorbis -logg -lmad -lm `$(DEVKITPRO)/portlibs/ppc/bin/freetype-config --libs`
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -62,22 +61,14 @@ export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 #---------------------------------------------------------------------------------
 CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 
-# TODO: these can probably be removed...? we don't use any assembly here
-sFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.S)))
-
-# TODO: separate this one into gfx, sound, font etc.? That way we probably add prefixes to the names...
-# configuring makefiles is a pain :P
-# TODO: simplify! Only one datadir after all!
+# resources
 GFX_BINFILES := $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/gfx/*.*)))
 ICONS_BINFILES := $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/icons/*.*)))
 SOUND_BINFILES := $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/sound/*.ogg)))
 FONTS_BINFILES := $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/fonts/**/*.ttf)))
 
-
 # No C++, only C, so using CC
 export LD := $(CC)
-
 
 export OFILES_GFX_BIN := $(addprefix gfx_,$(addsuffix .o,$(GFX_BINFILES)))
 export OFILES_ICONS_BIN := $(addprefix icons_,$(addsuffix .o,$(ICONS_BINFILES)))
@@ -85,7 +76,7 @@ export OFILES_SOUND_BIN := $(addprefix sound_,$(addsuffix .o,$(SOUND_BINFILES)))
 export OFILES_FONTS_BIN := $(addprefix fonts_,$(addsuffix .o,$(FONTS_BINFILES)))
 export OFILES_BIN	:=	$(OFILES_GFX_BIN) $(OFILES_ICONS_BIN) $(OFILES_SOUND_BIN) $(OFILES_FONT_BINFILES)
 
-export OFILES_SOURCES := $(CFILES:.c=.o) $(sFILES:.s=.o) $(SFILES:.S=.o)
+export OFILES_SOURCES := $(CFILES:.c=.o)
 export OFILES := $(OFILES_BIN) $(OFILES_SOURCES)
 
 # Header files for resources
@@ -136,9 +127,6 @@ $(OFILES_SOURCES) : $(HFILES)
 
 
 # Converts our resources into binary formats that can be packaged together with the executable
-# TODO: subfolders of data! or maybe we should see if there is an easier format to work with that we can use? 
-# TODO: how can we make the binfiles have the correct names? maybe separate them?
-# TODO: bin2o doesn't respect my naming. It simply uses the name without my prefixes
 gfx_%.png.o gfx_%_png.h : gfx/%.png
 	@echo $(notdir $<)
 	@bin2s -a 32 -H gfx_`(echo $(<F) | tr . _)`.h $< | $(AS) -o gfx_$(<F).o
