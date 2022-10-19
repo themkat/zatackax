@@ -74,7 +74,7 @@ export OFILES_GFX_BIN := $(addprefix gfx_,$(addsuffix .o,$(GFX_BINFILES)))
 export OFILES_ICONS_BIN := $(addprefix icons_,$(addsuffix .o,$(ICONS_BINFILES)))
 export OFILES_SOUND_BIN := $(addprefix sound_,$(addsuffix .o,$(SOUND_BINFILES)))
 export OFILES_FONTS_BIN := $(addprefix fonts_,$(addsuffix .o,$(FONTS_BINFILES)))
-export OFILES_BIN	:=	$(OFILES_GFX_BIN) $(OFILES_ICONS_BIN) $(OFILES_SOUND_BIN) $(OFILES_FONT_BINFILES)
+export OFILES_BIN	:=	$(OFILES_GFX_BIN) $(OFILES_ICONS_BIN) $(OFILES_SOUND_BIN) $(OFILES_FONTS_BIN)
 
 export OFILES_SOURCES := $(CFILES:.c=.o)
 export OFILES := $(OFILES_BIN) $(OFILES_SOURCES)
@@ -84,7 +84,7 @@ export GFX_HFILES = $(addprefix gfx_,$(addsuffix .h,$(subst .,_,$(GFX_BINFILES))
 export ICONS_HFILES = $(addprefix icons_,$(addsuffix .h,$(subst .,_,$(ICONS_BINFILES))))
 export SOUND_HFILES = $(addprefix sound_,$(addsuffix .h,$(subst .,_,$(SOUND_BINFILES))))
 export FONTS_HFILES = $(addprefix fonts_,$(addsuffix .h,$(subst .,_,$(FONTS_BINFILES))))
-export HFILES := $(GFX_HFILES) $(ICONS_HFILES)
+export HFILES := $(GFX_HFILES) $(ICONS_HFILES) $(SOUND_HFILES) $(FONTS_HFILES)
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
@@ -143,7 +143,12 @@ sound_%.ogg.o sound_%_ogg.h : sound/%.ogg
 	@echo $(notdir $<)
 	@bin2s -a 32 -H sound_`(echo $(<F) | tr . _)`.h $< | $(AS) -o sound_$(<F).o
 
-fonts_%.ttf.o fonts_%_ttf.h : fonts/**/%.ogg
+fonts_%.ttf.o fonts_%_ttf.h : fonts/jura/%.ttf
+	@echo $(notdir $<)
+	@bin2s -a 32 -H fonts_`(echo $(<F) | tr . _)`.h $< | $(AS) -o fonts_$(<F).o
+
+# TODO: why isn't it working to use both the font paths as dependencies for one target?
+fonts_%.ttf.o fonts_%_ttf.h : fonts/ankacoder/%.ttf
 	@echo $(notdir $<)
 	@bin2s -a 32 -H fonts_`(echo $(<F) | tr . _)`.h $< | $(AS) -o fonts_$(<F).o
 
